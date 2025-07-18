@@ -3,6 +3,11 @@ import selectorlib
 import smtplib, ssl
 import os
 import time
+import sqlite3
+
+#Create connection
+connection = sqlite3.connect("data1.db")
+cursor = connection.cursor()
 
 URL = "http://programmer100.pythonanywhere.com/tours/"
 HEADERS = {
@@ -19,35 +24,44 @@ def extract(source):
     return value
 
 
-def send_email(message):
-    host = "smtp.gmail.com"
-    port = 465
-    password = "nkky yphf dlqb wvoo"
-    username = "wajiehbadr@gmail.com"
-    receiver= "wajiehbadr@gmail.com"
-    context = ssl.create_default_context()
+# def send_email(message):
+#     host = "smtp.gmail.com"
+#     port = 465
+#     password = "nkky yphf dlqb wvoo"
+#     username = "wajiehbadr@gmail.com"
+#     receiver= "wajiehbadr@gmail.com"
+#     context = ssl.create_default_context()
 
-    with smtplib.SMTP_SSL(host, port, context=context) as server:
-        server.login(username, password)
-        server.sendmail(username, receiver, message)
-    print("Email was sent!")
+#     with smtplib.SMTP_SSL(host, port, context=context) as server:
+#         server.login(username, password)
+#         server.sendmail(username, receiver, message)
+#     print("Email was sent!")
 
 def store(extracted):
-    with open("data.txt","a") as file:
-        file.write(extracted + "\n")
+    row = extracted.split(",")
+    row = [item.strip() for item in row]  
+    cursor = connection.cursor()
+    cursor.execute("INSERT INTO events VALUES(?,?,?)",row)
+    connection.commit()
+    print("stored")
 
 def read(extracted):
-    with open("data.txt","r") as file:
-        return file.read()
+    row = extracted.split(",")
+    row = [i.strip() for i in row]
+    band,city,date = row
+    print(row)
+    cursor = connection.cursor()
+    cursor.execute('select * from events where band=? AND city=? AND date=?' ,(band, city, date))
+    rows = cursor.fetchall()
 
 if __name__ == "__main__":
     while True:
         scraped = scrape(URL)
         extracted = extract(scraped)
         print(extracted)
-        content = read(extracted)
         if extracted != "No upcoming tours":
-            if extracted not in "data.txt":
+            row = read(extracted)
+            if not row:
                 store(extracted)
-                send_email(message="NEW EVENT :p")
+                # send_email(message="NEW EVENT :p")
         time.sleep(5)
