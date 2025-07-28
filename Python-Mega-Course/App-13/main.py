@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import QApplication, QLabel, QWidget, QGridLayout, \
      QLineEdit, QPushButton, QMainWindow, QTableWidget, QTableWidgetItem, QDialog, \
-     QVBoxLayout, QComboBox
-from PyQt6.QtGui import QAction
+     QVBoxLayout, QComboBox, QToolBar, QStatusBar
+from PyQt6.QtGui import QAction, QIcon
 from PyQt6.QtCore import Qt
 import datetime, sys, sqlite3
 
@@ -47,12 +47,12 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Student Management System")
-        
+        self.setMinimumSize(600,600)
         file_menu_item = self.menuBar().addMenu("&File")
         help_menu_item = self.menuBar().addMenu("&Help")
         edit_menu_item = self.menuBar().addMenu("&Edit")
 
-        add_stu_section = QAction("Add Student", self)
+        add_stu_section = QAction(QIcon("icons/add.png"),"Add Student", self)
         add_stu_section.triggered.connect(self.insert)
         file_menu_item.addAction(add_stu_section)
 
@@ -60,7 +60,7 @@ class MainWindow(QMainWindow):
         help_menu_item.addAction(about_action)
         about_action.setMenuRole(QAction.MenuRole.NoRole)
 
-        search_section = QAction("Search", self)
+        search_section = QAction(QIcon("icons/search.png"),"Search", self)
         search_section.triggered.connect(self.search)
         edit_menu_item.addAction(search_section)
 
@@ -70,7 +70,30 @@ class MainWindow(QMainWindow):
         self.table.setHorizontalHeaderLabels(("Id", "Name", "Course", "Mobile Contact"))
         self.setCentralWidget(self.table)
 
-        
+        #Toolbar
+        toolbar = QToolBar()
+        toolbar.setMovable(True)
+        self.addToolBar(toolbar)
+        toolbar.addAction(add_stu_section)
+        toolbar.addAction(search_section)
+
+        #status bar
+        statusbar = QStatusBar()
+        self.setStatusBar(statusbar)
+
+        #Click Detection
+        self.table.cellClicked.connect(self.clicked)
+
+
+    def cell_clicked(self):
+        edit_button = QPushButton("Edit Record")
+        edit_button.clicked.connect(self.edit)
+
+        delete_button = QPushButton("Delete Record")
+        delete_button.clicked.connect(self.delete)
+
+        self.statusBar.addWidget(edit_button)
+
     def load_data(self):    
         connection = sqlite3.connect("database.db")
         result = connection.execute("SELECT * FROM students")
@@ -88,6 +111,15 @@ class MainWindow(QMainWindow):
     def search(self):
         dialog = SearchDialog()
         dialog.exec()
+
+    def load_data(self):
+    
+    def edit(self):
+
+    def delette(self):
+
+class EditDialog(QDialog):
+    pass
 
 class InsertDialog(QDialog):
     def __init__(self):
