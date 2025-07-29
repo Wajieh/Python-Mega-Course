@@ -42,6 +42,10 @@ class AgeCalculator(QWidget):
             self.output_label.setText("Invalid date format. Use MM/DD/YYYY.")
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> b79e84cf1b0d3d6700d5b9b7c6e900344d67688c
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -69,6 +73,7 @@ class MainWindow(QMainWindow):
         self.table.setHorizontalHeaderLabels(("Id", "Name", "Course", "Mobile Contact"))
         self.setCentralWidget(self.table)
 
+<<<<<<< HEAD
     #     #Toolbar
     #     toolbar = QToolBar()
     #     toolbar.setMovable(True)
@@ -93,6 +98,31 @@ class MainWindow(QMainWindow):
 
     #     self.statusBar().addWidget(edit_button)
     #     self.statusBar().addWidget(delete_button)
+=======
+        #Toolbar
+        toolbar = QToolBar()
+        toolbar.setMovable(True)
+        self.addToolBar(toolbar)
+        toolbar.addAction(add_stu_section)
+        toolbar.addAction(search_section)
+
+        #status bar
+        statusbar = QStatusBar()
+        self.setStatusBar(statusbar)
+
+        #Click Detection
+        self.table.cellClicked.connect(self.clicked)
+
+
+    def cell_clicked(self):
+        edit_button = QPushButton("Edit Record")
+        edit_button.clicked.connect(self.edit)
+
+        delete_button = QPushButton("Delete Record")
+        delete_button.clicked.connect(self.delete)
+
+        self.statusBar.addWidget(edit_button)
+>>>>>>> b79e84cf1b0d3d6700d5b9b7c6e900344d67688c
 
     def load_data(self):    
         connection = sqlite3.connect("database.db")
@@ -104,6 +134,7 @@ class MainWindow(QMainWindow):
                 self.table.setItem(row_num,col_num, QTableWidgetItem(str(data)))
         connection.close()
 
+<<<<<<< HEAD
 #     # def insert(self):
 #     #     dialog = InsertDialog()
 #     #     dialog.exec()
@@ -118,6 +149,24 @@ class MainWindow(QMainWindow):
 
 # class EditDialog(QDialog):
 #     pass
+=======
+    def insert(self):
+        dialog = InsertDialog()
+        dialog.exec()
+ 
+    def search(self):
+        dialog = SearchDialog()
+        dialog.exec()
+
+    def load_data(self):
+    
+    def edit(self):
+
+    def delette(self):
+
+class EditDialog(QDialog):
+    pass
+>>>>>>> b79e84cf1b0d3d6700d5b9b7c6e900344d67688c
 
 class InsertDialog(QDialog):
     def __init__(self):
@@ -157,7 +206,11 @@ class InsertDialog(QDialog):
         connection.commit()
         cursor.close()
         connection.close()
+<<<<<<< HEAD
         main_window.load_data()
+=======
+        age_calc.load_data()
+>>>>>>> b79e84cf1b0d3d6700d5b9b7c6e900344d67688c
 
 class SearchDialog(QDialog):
     def __init__(self, parent=None):
@@ -185,10 +238,17 @@ class SearchDialog(QDialog):
         result = cursor.execute("SELECT * FROM students WHERE name = ?", (name,))
         row = list(result)
         print(row)
+<<<<<<< HEAD
         items = main_window.table.findItems("John Smith", Qt.MatchFlag.MatchFixedString)
         for item in items:
             print(item)
             main_window.table.item(item.row(), 1).setSelected(True)
+=======
+        items = age_calc.table.findItems("John Smith", Qt.MatchFlag.MatchFixedString)
+        for item in items:
+            print(item)
+            age_calc.table.item(item.row(), 1).setSelected(True)
+>>>>>>> b79e84cf1b0d3d6700d5b9b7c6e900344d67688c
 
         cursor.close()
         connection.close()
@@ -196,7 +256,13 @@ class SearchDialog(QDialog):
 
 app = QApplication(sys.argv)
 # age_calc = AgeCalculator()
+<<<<<<< HEAD
 main_window = MainWindow()
 main_window.show()
 main_window.load_data()
+=======
+age_calc = MainWindow()
+age_calc.show()
+age_calc.load_data()
+>>>>>>> b79e84cf1b0d3d6700d5b9b7c6e900344d67688c
 sys.exit(app.exec())
