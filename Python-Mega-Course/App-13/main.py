@@ -9,7 +9,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Student Management System")
-        
+        self.setMinimumSize(800,600)
         file_menu_item = self.menuBar().addMenu("&File")
         help_menu_item = self.menuBar().addMenu("&Help")
         edit_menu_item = self.menuBar().addMenu("&Edit")
@@ -21,6 +21,7 @@ class MainWindow(QMainWindow):
         about_action = QAction("About", self)
         help_menu_item.addAction(about_action)
         about_action.setMenuRole(QAction.MenuRole.NoRole)
+        about_action.triggered.connect(self.about)
 
         search_section = QAction(QIcon("icons/search.png"), "Search", self)
         edit_menu_item.addAction(search_section)
@@ -85,6 +86,10 @@ class MainWindow(QMainWindow):
 
     def delete(self):
         dialog = DeleteDialog()
+        dialog.exec()
+
+    def about(self):
+        dialog = AboutDialog(self)
         dialog.exec()
 
 class EditDialog(QDialog):
@@ -245,6 +250,14 @@ class SearchDialog(QDialog):
         cursor.close()
         connection.close()
 
+class AboutDialog(QMessageBox):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle('About')
+        content = """ 
+        This app was Created by Wajieh and God knows how difficult it was.
+        """
+        self.setText(content)
 
 app = QApplication(sys.argv)
 # age_calc = AgeCalculator()
