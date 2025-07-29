@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QApplication, QLabel, QWidget, QGridLayout, \
      QLineEdit, QPushButton, QMainWindow, QTableWidget, QTableWidgetItem, QDialog, \
-     QVBoxLayout, QComboBox, QToolBar, QStatusBar
+     QVBoxLayout, QComboBox, QToolBar, QStatusBar, QMessageBox
 from PyQt6.QtGui import QAction, QIcon
 from PyQt6.QtCore import Qt
 import datetime, sys, sqlite3
@@ -84,7 +84,7 @@ class MainWindow(QMainWindow):
         dialog.exec()
 
     def delete(self):
-        dialog = DeleteDialog(self)
+        dialog = DeleteDialog()
         dialog.exec()
 
 class EditDialog(QDialog):
@@ -134,8 +134,42 @@ class EditDialog(QDialog):
         cursor.close()
         connection.close()
         age_calc.load_data()
+
 class DeleteDialog(QDialog):
-    pass
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Delete Student Data")
+
+
+        layout = QGridLayout()
+        confirmation = QLabel("Are you sure you want to delete?")
+        yes = QPushButton("Yes")
+        no = QPushButton("No")
+
+        layout .addWidget(confirmation,0,0,1,2)
+        layout.addWidget(yes,1,0)
+        layout.addWidget(no,1,1)
+        self.setLayout(layout)
+
+        yes.clicked.connect(self.delete_student)
+    
+    def delete_student(self):
+        index = age_calc.table.currentRow()
+        id_student = age_calc.table.item(index,0).text()
+        
+        connection = sqlite3.connect("database.db")
+        cursor = connection.cursor()
+        cursor.execute("DELETE from students WHERE id = ?", (id_student, ))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        age_calc.load_data()
+
+        self.close()
+        confirmation_widget = QMessageBox()
+        confirmation_widget.setWindowTitle("Success")
+        confirmation_widget.setText("Record deleted successfully")
+        confirmation_widget.exec()
 
 class InsertDialog(QDialog):
     def __init__(self):
