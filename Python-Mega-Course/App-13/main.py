@@ -57,7 +57,7 @@ class MainWindow(QMainWindow):
         if children:
             for child in children:
                 self.statusbar.removeWidget(child)
-                
+
         self.statusbar.addWidget(edit_button)
         self.statusbar.addWidget(delete_button)
 
@@ -88,8 +88,52 @@ class MainWindow(QMainWindow):
         dialog.exec()
 
 class EditDialog(QDialog):
-    pass
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Update Student Data")
+        self.setFixedWidth(300)
+        self.setFixedHeight(600)
+        
+        layout = QVBoxLayout()
 
+        #Get Stu name
+        index = age_calc.table.currentRow()
+        student_name = age_calc.table.item(index,1).text()
+        self.id_student = age_calc.table.item(index,0).text()
+
+        self.student_name = QLineEdit(student_name)
+        self.student_name.setPlaceholderText("Name")
+        layout.addWidget(self.student_name)
+        
+        course_name = age_calc.table.item(index,2).text()
+        self.course_name = QComboBox()
+        courses = ["Bio", "Phy", "Che"]
+        self.course_name.addItems(courses)
+        self.course_name.setCurrentText(course_name)
+        layout.addWidget(self.course_name)
+
+        mobile = age_calc.table.item(index,3).text()
+        self.phone_num = QLineEdit(mobile)
+        self.phone_num.setPlaceholderText("Phone #")
+        layout.addWidget(self.phone_num)
+
+        button = QPushButton("Submit")
+        button.clicked.connect(self.update_student)
+        layout.addWidget(button)
+
+        self.setLayout(layout)
+
+    def update_student(self):
+        connection = sqlite3.connect("database.db")
+        cursor = connection.cursor()
+        cursor.execute("UPDATE students SET name = ?, course = ?, mobile = ? WHERE id = ?",
+                       (self.student_name.text(),
+                        self.course_name.itemText(self.course_name.currentIndex()),
+                        self.phone_num.text(), self.id_student))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        age_calc.load_data()
 class DeleteDialog(QDialog):
     pass
 
