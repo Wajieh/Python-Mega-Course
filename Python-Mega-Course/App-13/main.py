@@ -255,7 +255,7 @@ class AboutDialog(QMessageBox):
         super().__init__(parent)
         self.setWindowTitle('About')
         content = """ 
-        This app was Created by Wajieh and God knows how difficult it was.
+        This app was created by ꖿ⩓╝⟦⅀⧦.
         """
         self.setText(content)
 
