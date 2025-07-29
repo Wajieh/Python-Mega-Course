@@ -1,47 +1,9 @@
 from PyQt6.QtWidgets import QApplication, QLabel, QWidget, QGridLayout, \
      QLineEdit, QPushButton, QMainWindow, QTableWidget, QTableWidgetItem, QDialog, \
-     QVBoxLayout, QComboBox
-from PyQt6.QtGui import QAction
+     QVBoxLayout, QComboBox, QToolBar, QStatusBar
+from PyQt6.QtGui import QAction, QIcon
 from PyQt6.QtCore import Qt
 import datetime, sys, sqlite3
-
-class AgeCalculator(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Age Calculator")
-        grid = QGridLayout()
-
-        name_label = QLabel("Name: ")
-        self.name_line_edit = QLineEdit()
-
-        birth_date  = QLabel ("DOB (MM/DD/YYYY): ")
-        self.birth_date_line_edit = QLineEdit()
-
-        calculate = QPushButton("Calculate Age")
-        calculate.clicked.connect(self.calculate_age)
-        self.output_label  = QLabel("")
-
-        grid.addWidget(name_label, 0, 0)
-        grid.addWidget(self.name_line_edit, 0, 1)
-        grid.addWidget(birth_date, 1, 0)
-        grid.addWidget(self.birth_date_line_edit, 1, 1)
-        grid.addWidget(calculate, 2, 0, 1, 2)
-        grid.addWidget(self.output_label, 3, 0, 1, 2)
-
-        self.setLayout(grid)  # ✅ Don't forget this!
-
-    def calculate_age(self):
-        try:
-            current_year = datetime.datetime.now().year
-            dob = self.birth_date_line_edit.text()
-            yob = datetime.datetime.strptime(dob, "%m/%d/%Y").year
-            age = current_year - yob
-            name = self.name_line_edit.text()
-            self.output_label.setText(f"{name} is {age} years old.")
-        except ValueError:
-            self.output_label.setText("Invalid date format. Use MM/DD/YYYY.")
-
-
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -52,7 +14,7 @@ class MainWindow(QMainWindow):
         help_menu_item = self.menuBar().addMenu("&Help")
         edit_menu_item = self.menuBar().addMenu("&Edit")
 
-        add_stu_section = QAction("Add Student", self)
+        add_stu_section = QAction(QIcon("icons/add.png"), "Add Student", self)
         add_stu_section.triggered.connect(self.insert)
         file_menu_item.addAction(add_stu_section)
 
@@ -60,17 +22,41 @@ class MainWindow(QMainWindow):
         help_menu_item.addAction(about_action)
         about_action.setMenuRole(QAction.MenuRole.NoRole)
 
-        search_section = QAction("Search", self)
-        search_section.triggered.connect(self.search)
+        search_section = QAction(QIcon("icons/search.png"), "Search", self)
         edit_menu_item.addAction(search_section)
+        search_section.triggered.connect(self.search)
+
 
 
         self.table = QTableWidget()
         self.table.setColumnCount(4)
         self.table.setHorizontalHeaderLabels(("Id", "Name", "Course", "Mobile Contact"))
+        self.table.verticalHeader().setVisible(False)
         self.setCentralWidget(self.table)
 
+        #Tool Bar
+        toolbar = QToolBar()
+        toolbar.setMovable(True)
+        self.addToolBar(toolbar)
+        toolbar.addAction(add_stu_section)
+        toolbar.addAction(search_section)
+
+
         
+    # def cell_clicked(self):
+    #     edit_button = QPushButton('Edit Record')
+    #     edit_button.clicked.connect(self.edit)
+
+    #     delete_button = QPushButton('Delete Record')
+    #     delete_button.clicked.connect(self.delete)
+
+    #     children = self.statusbar.findChildren(QPushButton)
+    #     if children:
+    #         for child in children:
+    #             self.statusbar.removeWidget(child)
+    #     self.statusbar.addWidget(edit_button)
+    #     self.statusbar.addWidget(delete_button)
+
     def load_data(self):    
         connection = sqlite3.connect("database.db")
         result = connection.execute("SELECT * FROM students")
