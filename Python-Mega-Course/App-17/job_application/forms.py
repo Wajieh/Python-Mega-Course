@@ -6,6 +6,6 @@ class ApplicationForm(forms.Form):
     email=forms.CharField()
     date=forms.DateField()
     occupation = forms.CharField(max_length=80)
-    
+
     def __str__(self):
-        return f"{self.firstname} {self.lastname}"
+        return f"{self.first_name} {self.last_name}"
