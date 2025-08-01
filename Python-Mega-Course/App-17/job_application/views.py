@@ -2,7 +2,7 @@ from django.shortcuts import render
 from .forms import ApplicationForm
 from .models import Form
 from django.contrib import messages
-
+from django.core.mail import EmailMessage
 # Create your views here.
 def index(request):
     if request.method == "POST":
@@ -17,6 +17,8 @@ def index(request):
             Form.objects.create(firstname=first_name,lastname=last_name
                             ,email=email,date=date,
                             occupation=occupation)
-            messages.success(request, "Form Submitted")
+            message_body = messages.success(request, "Form Submitted")
+            email_message = EmailMessage("Form submission", message_body,to=[email] )
+            email_message.send()
     return render(request, "index.html")
 
