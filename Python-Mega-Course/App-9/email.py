@@ -4,7 +4,7 @@ from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 import filetype  # pip install filetype
 
-password = "nkky yphf dlqb wvoo"
+password = ""
 sender = "wajiehbadr@gmail.com"
 receiver= "wajiehbadr@gmail.com"
 
