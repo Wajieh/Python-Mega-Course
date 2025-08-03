@@ -1,22 +1,29 @@
 import requests
-import streamlit as st
+from send_email import send_email
 
-api_key = "YscPc40NqgFqcvqbp1oi9CGWjdbmbtVgQ33exVUf"
-url = f"https://api.nasa.gov/planetary/apod?api_key={api_key}"
+topic = "tesla"
 
-response=requests.get(url)
-apod = response.json()
+api_key = "890603a55bfa47048e4490069ebee18c"
+url = "https://newsapi.org/v2/everything?" \
+      f"q={topic}&" \
+      "sortBy=publishedAt&" \
+      "apiKey=890603a55bfa47048e4490069ebee18c&" \
+      "language=en"
 
-title = apod["title"]
-image = apod["url"]
-explain = apod["explanation"]
+# Make request
+request = requests.get(url)
 
-image_filepath = "img.png"
-response_img = requests.get(image)
-print(response_img)
-with open(image_filepath,'wb') as file:
-    file.write(response_img.content)
+# Get a dictionary with data
+content = request.json()
 
-st.title(title)
-st.image(image)
-st.write(explain)
+# Access the article titles and description
+body = ""
+for article in content["articles"][:20]:
+    if article["title"] is not None:
+        body = "Subject: Today's news" \
+               + "\n" + body + article["title"] + "\n" \
+               + article["description"] \
+               + "\n" + article["url"] + 2*"\n"
+
+body = body.encode("utf-8")
+send_email(message=body)
