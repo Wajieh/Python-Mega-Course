@@ -61,5 +61,4 @@ def generate(invoices_path,pdf_path,PDFs,product_id,product_name,amount_purchase
         pdf.cell(w=25, h=8, txt=f"PythonHow")
         pdf.image(image_path, w=10)
 
-        os.makedirs(PDFs)
         pdf.output(f"{PDFs}/{filename}.pdf")
